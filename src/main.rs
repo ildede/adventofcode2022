@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::str::FromStr;
 use clap::Parser;
 use colored::Colorize;
 
@@ -18,17 +19,20 @@ struct Args {
 }
 
 fn main() {
-    let args = Args::parse();
-
-    println!("Solve day {} part {}!", args.day, args.part);
-    match args.day {
+    let args: Args = Args::parse();
+    let part = Part::from_str(args.part.as_str()).expect("invalid argument 'part', use A or B");
+    println!("Solve day {} part {:?}!", args.day, part);
+    let result = match args.day {
         1 => {
-            let lines = read_lines("input/day1");
-            let result = solvers::day1::solve(lines);
-            println!("{}: {}", format!("SOLUTION").green(), result);
+            format!(
+                "{}: {}",
+                format!("SOLUTION").green(),
+                solvers::day1::solve(part, read_lines("input/day1"))
+            )
         },
-        _ => println!("{}: Solver for day {} not implemented", format!("ERROR").red(), args.day)
-    }
+        _ => format!("{}: Solver for day {} not implemented", format!("ERROR").red(), args.day)
+    };
+    println!("{}", result);
 }
 
 fn read_lines(filename: &str) -> Vec<String> {
@@ -43,4 +47,20 @@ fn read_lines(filename: &str) -> Vec<String> {
         }
     }
     lines
+}
+
+#[derive(Debug)]
+pub enum Part {
+    A,
+    B
+}
+impl FromStr for Part {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Part, Self::Err> {
+        match input {
+            "A"  => Ok(Part::A),
+            "B"  => Ok(Part::B),
+            _      => Err(()),
+        }
+    }
 }
