@@ -3,19 +3,17 @@ use crate::Part;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
     let scores: Vec<u32> = lines.into_iter()
-        .map(Game::new)
+        .map(|l| {
+            match part {
+                Part::A => Game::new_a(l),
+                Part::B => Game::new_b(l)
+            }
+        })
         .map(Game::score)
         .collect();
 
-    match part {
-        Part::A => {
-            let result: u32 = scores.iter().sum();
-            String::from(format!("{}", result))
-        }
-        Part::B => {
-            unimplemented!()
-        }
-    }
+    let result: u32 = scores.iter().sum();
+    String::from(format!("{}", result))
 }
 
 struct Game {
@@ -24,11 +22,33 @@ struct Game {
 }
 
 impl Game {
-    fn new(line: String) -> Game {
+    fn new_a(line: String) -> Game {
         let mut split = line.split(' ');
         return Game {
             opponent: Values::from(split.next().unwrap()),
             me: Values::from(split.next().unwrap()),
+        };
+    }
+
+    fn new_b(line: String) -> Game {
+        let mut split = line.split(' ');
+        let opponent = Values::from(split.next().unwrap());
+        return Game {
+            opponent: opponent,
+            me: match split.next().unwrap() {
+                "X" => match opponent {
+                    Values::Rock => Values::Scissors,
+                    Values::Paper => Values::Rock,
+                    Values::Scissors => Values::Paper
+                },
+                "Y" => opponent.clone(),
+                "Z" => match opponent {
+                    Values::Rock => Values::Paper,
+                    Values::Paper => Values::Scissors,
+                    Values::Scissors => Values::Rock
+                },
+                _ => panic!("invalid value")
+            },
         };
     }
 
@@ -43,7 +63,7 @@ impl Game {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum Values {
     Rock,
     Paper,
@@ -51,8 +71,6 @@ enum Values {
 }
 
 impl Values {
-    // Opponent: A for Rock, B for Paper, and C for Scissors
-    // Me: X for Rock, Y for Paper, and Z for Scissors
     fn from(s: &str) -> Values {
         match s {
             "A" => Values::Rock,
@@ -121,24 +139,72 @@ mod tests {
     }
 
     #[test]
+    fn solve_example_part_b() {
+        let lines = vec![
+            "A Y".to_string(),
+            "B X".to_string(),
+            "C Z".to_string(),
+        ];
+        let result = solve(Part::B, lines);
+        assert_eq!(result, "12");
+    }
+
+    #[test]
     fn it_creates_game_of_rocks() {
-        let game = Game::new(String::from("A X"));
+        let game = Game::new_a(String::from("A X"));
         assert_eq!(game.opponent, Values::Rock);
         assert_eq!(game.me, Values::Rock);
     }
 
     #[test]
     fn it_creates_game_of_papers() {
-        let game = Game::new(String::from("B Y"));
+        let game = Game::new_a(String::from("B Y"));
         assert_eq!(game.opponent, Values::Paper);
         assert_eq!(game.me, Values::Paper);
     }
 
     #[test]
     fn it_creates_game_of_scissors() {
-        let game = Game::new(String::from("C Z"));
+        let game = Game::new_a(String::from("C Z"));
         assert_eq!(game.opponent, Values::Scissors);
         assert_eq!(game.me, Values::Scissors);
+    }
+
+    #[test]
+    fn it_creates_games_that_i_should_lose() {
+        let vs_rock = Game::new_b(String::from("A X"));
+        assert_eq!(vs_rock.opponent, Values::Rock);
+        assert_eq!(vs_rock.me, Values::Scissors);
+        let vs_paper = Game::new_b(String::from("B X"));
+        assert_eq!(vs_paper.opponent, Values::Paper);
+        assert_eq!(vs_paper.me, Values::Rock);
+        let vs_scissors = Game::new_b(String::from("C X"));
+        assert_eq!(vs_scissors.opponent, Values::Scissors);
+        assert_eq!(vs_scissors.me, Values::Paper);
+    }
+    #[test]
+    fn it_creates_games_that_should_ends_draw() {
+        let vs_rock = Game::new_b(String::from("A Y"));
+        assert_eq!(vs_rock.opponent, Values::Rock);
+        assert_eq!(vs_rock.me, Values::Rock);
+        let vs_paper = Game::new_b(String::from("B Y"));
+        assert_eq!(vs_paper.opponent, Values::Paper);
+        assert_eq!(vs_paper.me, Values::Paper);
+        let vs_scissors = Game::new_b(String::from("C Y"));
+        assert_eq!(vs_scissors.opponent, Values::Scissors);
+        assert_eq!(vs_scissors.me, Values::Scissors);
+    }
+    #[test]
+    fn it_creates_games_that_i_should_win() {
+        let vs_rock = Game::new_b(String::from("A Z"));
+        assert_eq!(vs_rock.opponent, Values::Rock);
+        assert_eq!(vs_rock.me, Values::Paper);
+        let vs_paper = Game::new_b(String::from("B Z"));
+        assert_eq!(vs_paper.opponent, Values::Paper);
+        assert_eq!(vs_paper.me, Values::Scissors);
+        let vs_scissors = Game::new_b(String::from("C Z"));
+        assert_eq!(vs_scissors.opponent, Values::Scissors);
+        assert_eq!(vs_scissors.me, Values::Rock);
     }
 
     #[test]
