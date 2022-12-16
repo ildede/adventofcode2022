@@ -51,6 +51,34 @@ fn main() {
                 solvers::day4::solve(part, read_lines("input/day4"))
             )
         },
+        5 => {
+            format!(
+                "{}: {}",
+                format!("SOLUTION").green(),
+/*
+    [C]         [Q]         [V]
+    [D]         [D] [S]     [M] [Z]
+    [G]     [P] [W] [M]     [C] [G]
+    [F]     [Z] [C] [D] [P] [S] [W]
+[P] [L]     [C] [V] [W] [W] [H] [L]
+[G] [B] [V] [R] [L] [N] [G] [P] [F]
+[R] [T] [S] [S] [S] [T] [D] [L] [P]
+[N] [J] [M] [L] [P] [C] [H] [Z] [R]
+ 1   2   3   4   5   6   7   8   9
+*/
+                solvers::day5::solve(part, vec![
+                    vec!['N','R','G','P'],
+                    vec!['J','T','B','L','F','G','D','C'],
+                    vec!['M','S','V'],
+                    vec!['L','S','R','C','Z','P'],
+                    vec!['P','S','L','V','C','W','D','Q'],
+                    vec!['C','T','N','W','D','M','S'],
+                    vec!['H','D','G','W','P'],
+                    vec!['Z','L','P','H','S','C','M','V'],
+                    vec!['R','P','F','L','W','G','Z'],
+                ],read_lines("input/day5"))
+            )
+        },
         _ => format!("{}: Solver for day {} not implemented", format!("ERROR").red(), args.day)
     };
     println!("{}", result);
