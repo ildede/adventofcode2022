@@ -1,4 +1,3 @@
-use std::fmt::format;
 use crate::Part;
 
 pub fn solve(part: Part, stacks: Vec<Vec<char>>, lines: Vec<String>) -> String {
@@ -9,8 +8,8 @@ pub fn solve(part: Part, stacks: Vec<Vec<char>>, lines: Vec<String>) -> String {
         .collect();
 
     let result = match part {
-        Part::A => apply_instruction(stacks, instructions),
-        Part::B => unimplemented!()
+        Part::A => apply_instruction_a(stacks, instructions),
+        Part::B => apply_instruction_b(stacks, instructions)
     };
     String::from(get_last_elements(result))
 }
@@ -40,7 +39,7 @@ impl Instruction {
     }
 }
 
-fn apply_instruction(stack: Vec<Vec<char>>, instructions: Vec<Instruction>) -> Vec<Vec<char>> {
+fn apply_instruction_a(stack: Vec<Vec<char>>, instructions: Vec<Instruction>) -> Vec<Vec<char>> {
     let mut cur_stack = stack.clone();
     for instruction in instructions {
         for _ in 0..instruction.quantity {
@@ -50,6 +49,18 @@ fn apply_instruction(stack: Vec<Vec<char>>, instructions: Vec<Instruction>) -> V
                 Some(el) => cur_stack[instruction.to-1].push(el)
             }
 
+        }
+    }
+    cur_stack
+}
+
+fn apply_instruction_b(stack: Vec<Vec<char>>, instructions: Vec<Instruction>) -> Vec<Vec<char>> {
+    let mut cur_stack = stack.clone();
+    for instruction in instructions {
+        let new_len = cur_stack[instruction.from-1].len() - instruction.quantity as usize;
+        let x = cur_stack[instruction.from-1].split_off(new_len);
+        for removed_element in x {
+            cur_stack[instruction.to-1].push(removed_element);
         }
     }
     cur_stack
@@ -68,7 +79,7 @@ fn get_last_elements(stack: Vec<Vec<char>>) -> String{
 #[cfg(test)]
 mod tests {
     use crate::Part;
-    use crate::solvers::day5::{apply_instruction, get_last_elements, Instruction, solve};
+    use crate::solvers::day5::{apply_instruction_a, apply_instruction_b, get_last_elements, Instruction, solve};
 
     #[test]
     fn solve_example_part_a() {
@@ -119,14 +130,14 @@ mod tests {
     }
 
     #[test]
-    fn it_apply_instruction() {
+    fn it_apply_instruction_a() {
         let initial_stacks = vec![
             vec!['Z', 'N'],
             vec!['N', 'C', 'D'],
             vec!['P'],
         ];
 
-        let result = apply_instruction(
+        let result = apply_instruction_a(
             initial_stacks,
             vec![Instruction {
                 quantity: 1,
@@ -142,14 +153,14 @@ mod tests {
     }
 
     #[test]
-    fn it_apply_instructions() {
+    fn it_apply_instructions_a() {
         let initial_stacks = vec![
             vec!['Z', 'N'],
             vec!['N', 'C', 'D'],
             vec!['P'],
         ];
 
-        let result = apply_instruction(
+        let result = apply_instruction_a(
             initial_stacks,
             vec![
                 Instruction { quantity: 1, from: 2, to: 3 },
@@ -160,6 +171,52 @@ mod tests {
         assert_eq!(result, vec![
             vec!['Z'],
             vec!['N', 'C', 'P', 'D', 'N'],
+            vec![],
+        ])
+    }
+
+    #[test]
+    fn it_apply_instruction_b() {
+        let initial_stacks = vec![
+            vec!['Z', 'N'],
+            vec!['N', 'C', 'D'],
+            vec!['P'],
+        ];
+
+        let result = apply_instruction_b(
+            initial_stacks,
+            vec![Instruction {
+                quantity: 1,
+                from: 2,
+                to: 3,
+            }]);
+
+        assert_eq!(result, vec![
+            vec!['Z', 'N'],
+            vec!['N', 'C'],
+            vec!['P', 'D'],
+        ])
+    }
+
+    #[test]
+    fn it_apply_instructions_b() {
+        let initial_stacks = vec![
+            vec!['Z', 'N'],
+            vec!['N', 'C', 'D'],
+            vec!['P'],
+        ];
+
+        let result = apply_instruction_b(
+            initial_stacks,
+            vec![
+                Instruction { quantity: 1, from: 2, to: 3 },
+                Instruction { quantity: 2, from: 3, to: 1 },
+                Instruction { quantity: 3, from: 1, to: 2 }
+            ]);
+
+        assert_eq!(result, vec![
+            vec!['Z'],
+            vec!['N', 'C', 'N', 'P', 'D'],
             vec![],
         ])
     }
