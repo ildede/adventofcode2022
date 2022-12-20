@@ -79,6 +79,13 @@ fn main() {
                 ],read_lines("input/day5"))
             )
         },
+        6 => {
+            format!(
+                "{}: {}",
+                format!("SOLUTION").green(),
+                solvers::day6::solve(part, read_lines("input/day6").pop().unwrap())
+            )
+        },
         _ => format!("{}: Solver for day {} not implemented", format!("ERROR").red(), args.day)
     };
     println!("{}", result);
