@@ -1,8 +1,8 @@
+use clap::Parser;
+use colored::Colorize;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
-use clap::Parser;
-use colored::Colorize;
 
 mod solvers;
 
@@ -29,64 +29,72 @@ fn main() {
                 format!("SOLUTION").green(),
                 solvers::day1::solve(part, read_lines("input/day1"))
             )
-        },
+        }
         2 => {
             format!(
                 "{}: {}",
                 format!("SOLUTION").green(),
                 solvers::day2::solve(part, read_lines("input/day2"))
             )
-        },
+        }
         3 => {
             format!(
                 "{}: {}",
                 format!("SOLUTION").green(),
                 solvers::day3::solve(part, read_lines("input/day3"))
             )
-        },
+        }
         4 => {
             format!(
                 "{}: {}",
                 format!("SOLUTION").green(),
                 solvers::day4::solve(part, read_lines("input/day4"))
             )
-        },
+        }
         5 => {
             format!(
                 "{}: {}",
                 format!("SOLUTION").green(),
-/*
-    [C]         [Q]         [V]
-    [D]         [D] [S]     [M] [Z]
-    [G]     [P] [W] [M]     [C] [G]
-    [F]     [Z] [C] [D] [P] [S] [W]
-[P] [L]     [C] [V] [W] [W] [H] [L]
-[G] [B] [V] [R] [L] [N] [G] [P] [F]
-[R] [T] [S] [S] [S] [T] [D] [L] [P]
-[N] [J] [M] [L] [P] [C] [H] [Z] [R]
- 1   2   3   4   5   6   7   8   9
-*/
-                solvers::day5::solve(part, vec![
-                    vec!['N','R','G','P'],
-                    vec!['J','T','B','L','F','G','D','C'],
-                    vec!['M','S','V'],
-                    vec!['L','S','R','C','Z','P'],
-                    vec!['P','S','L','V','C','W','D','Q'],
-                    vec!['C','T','N','W','D','M','S'],
-                    vec!['H','D','G','W','P'],
-                    vec!['Z','L','P','H','S','C','M','V'],
-                    vec!['R','P','F','L','W','G','Z'],
-                ],read_lines("input/day5"))
+                /*
+                    [C]         [Q]         [V]
+                    [D]         [D] [S]     [M] [Z]
+                    [G]     [P] [W] [M]     [C] [G]
+                    [F]     [Z] [C] [D] [P] [S] [W]
+                [P] [L]     [C] [V] [W] [W] [H] [L]
+                [G] [B] [V] [R] [L] [N] [G] [P] [F]
+                [R] [T] [S] [S] [S] [T] [D] [L] [P]
+                [N] [J] [M] [L] [P] [C] [H] [Z] [R]
+                 1   2   3   4   5   6   7   8   9
+                */
+                solvers::day5::solve(
+                    part,
+                    vec![
+                        vec!['N', 'R', 'G', 'P'],
+                        vec!['J', 'T', 'B', 'L', 'F', 'G', 'D', 'C'],
+                        vec!['M', 'S', 'V'],
+                        vec!['L', 'S', 'R', 'C', 'Z', 'P'],
+                        vec!['P', 'S', 'L', 'V', 'C', 'W', 'D', 'Q'],
+                        vec!['C', 'T', 'N', 'W', 'D', 'M', 'S'],
+                        vec!['H', 'D', 'G', 'W', 'P'],
+                        vec!['Z', 'L', 'P', 'H', 'S', 'C', 'M', 'V'],
+                        vec!['R', 'P', 'F', 'L', 'W', 'G', 'Z'],
+                    ],
+                    read_lines("input/day5")
+                )
             )
-        },
+        }
         6 => {
             format!(
                 "{}: {}",
                 format!("SOLUTION").green(),
                 solvers::day6::solve(part, read_lines("input/day6").pop().unwrap())
             )
-        },
-        _ => format!("{}: Solver for day {} not implemented", format!("ERROR").red(), args.day)
+        }
+        _ => format!(
+            "{}: Solver for day {} not implemented",
+            format!("ERROR").red(),
+            args.day
+        ),
     };
     println!("{}", result);
 }
@@ -99,7 +107,7 @@ fn read_lines(filename: &str) -> Vec<String> {
     for line in reader.lines() {
         match line {
             Ok(l) => lines.push(l),
-            Err(_) => println!("Unreadable line? 🤔")
+            Err(_) => println!("Unreadable line? 🤔"),
         }
     }
     lines
@@ -108,15 +116,15 @@ fn read_lines(filename: &str) -> Vec<String> {
 #[derive(Debug)]
 pub enum Part {
     A,
-    B
+    B,
 }
 impl FromStr for Part {
     type Err = ();
     fn from_str(input: &str) -> Result<Part, Self::Err> {
         match input {
-            "A"  => Ok(Part::A),
-            "B"  => Ok(Part::B),
-            _      => Err(()),
+            "A" => Ok(Part::A),
+            "B" => Ok(Part::B),
+            _ => Err(()),
         }
     }
 }
