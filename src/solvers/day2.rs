@@ -1,13 +1,12 @@
-use std::cmp::Ordering;
 use crate::Part;
+use std::cmp::Ordering;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
-    let scores: Vec<u32> = lines.into_iter()
-        .map(|l| {
-            match part {
-                Part::A => Game::new_a(l),
-                Part::B => Game::new_b(l)
-            }
+    let scores: Vec<u32> = lines
+        .into_iter()
+        .map(|l| match part {
+            Part::A => Game::new_a(l),
+            Part::B => Game::new_b(l),
         })
         .map(Game::score)
         .collect();
@@ -39,15 +38,15 @@ impl Game {
                 "X" => match opponent {
                     Values::Rock => Values::Scissors,
                     Values::Paper => Values::Rock,
-                    Values::Scissors => Values::Paper
+                    Values::Scissors => Values::Paper,
                 },
                 "Y" => opponent.clone(),
                 "Z" => match opponent {
                     Values::Rock => Values::Paper,
                     Values::Paper => Values::Scissors,
-                    Values::Scissors => Values::Rock
+                    Values::Scissors => Values::Rock,
                 },
-                _ => panic!("invalid value")
+                _ => panic!("invalid value"),
             },
         };
     }
@@ -59,7 +58,7 @@ impl Game {
             self.me.shape_value() + 6
         } else {
             self.me.shape_value()
-        }
+        };
     }
 }
 
@@ -88,7 +87,7 @@ impl Values {
         match self {
             Values::Rock => 1,
             Values::Paper => 2,
-            Values::Scissors => 3
+            Values::Scissors => 3,
         }
     }
 }
@@ -96,55 +95,41 @@ impl Values {
 impl PartialOrd for Values {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         match self {
-            Values::Rock => {
-                match other {
-                    Values::Rock => Some(Ordering::Equal),
-                    Values::Paper => Some(Ordering::Less),
-                    Values::Scissors => Some(Ordering::Greater)
-                }
-            }
-            Values::Paper => {
-                match other {
-                    Values::Rock => Some(Ordering::Greater),
-                    Values::Paper => Some(Ordering::Equal),
-                    Values::Scissors => Some(Ordering::Less)
-                }
-            }
-            Values::Scissors => {
-                match other {
-                    Values::Rock => Some(Ordering::Less),
-                    Values::Paper => Some(Ordering::Greater),
-                    Values::Scissors => Some(Ordering::Equal)
-                }
-            }
+            Values::Rock => match other {
+                Values::Rock => Some(Ordering::Equal),
+                Values::Paper => Some(Ordering::Less),
+                Values::Scissors => Some(Ordering::Greater),
+            },
+            Values::Paper => match other {
+                Values::Rock => Some(Ordering::Greater),
+                Values::Paper => Some(Ordering::Equal),
+                Values::Scissors => Some(Ordering::Less),
+            },
+            Values::Scissors => match other {
+                Values::Rock => Some(Ordering::Less),
+                Values::Paper => Some(Ordering::Greater),
+                Values::Scissors => Some(Ordering::Equal),
+            },
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::Part;
     use crate::solvers::day2::solve;
     use crate::solvers::day2::{Game, Values};
+    use crate::Part;
 
     #[test]
     fn solve_example_part_a() {
-        let lines = vec![
-            "A Y".to_string(),
-            "B X".to_string(),
-            "C Z".to_string(),
-        ];
+        let lines = vec!["A Y".to_string(), "B X".to_string(), "C Z".to_string()];
         let result = solve(Part::A, lines);
         assert_eq!(result, "15");
     }
 
     #[test]
     fn solve_example_part_b() {
-        let lines = vec![
-            "A Y".to_string(),
-            "B X".to_string(),
-            "C Z".to_string(),
-        ];
+        let lines = vec!["A Y".to_string(), "B X".to_string(), "C Z".to_string()];
         let result = solve(Part::B, lines);
         assert_eq!(result, "12");
     }
@@ -216,33 +201,58 @@ mod tests {
 
     #[test]
     fn it_gives_the_total_score_during_draws() {
-        let rocks = Game { opponent: Values::Rock, me: Values::Rock };
+        let rocks = Game {
+            opponent: Values::Rock,
+            me: Values::Rock,
+        };
         assert_eq!(rocks.score(), 4);
-        let papers = Game { opponent: Values::Paper, me: Values::Paper };
+        let papers = Game {
+            opponent: Values::Paper,
+            me: Values::Paper,
+        };
         assert_eq!(papers.score(), 5);
-        let scissors = Game { opponent: Values::Scissors, me: Values::Scissors };
+        let scissors = Game {
+            opponent: Values::Scissors,
+            me: Values::Scissors,
+        };
         assert_eq!(scissors.score(), 6);
     }
 
     #[test]
     fn it_gives_the_total_score_during_wins() {
-        let rocks = Game { opponent: Values::Rock, me: Values::Paper };
+        let rocks = Game {
+            opponent: Values::Rock,
+            me: Values::Paper,
+        };
         assert_eq!(rocks.score(), 8);
-        let papers = Game { opponent: Values::Paper, me: Values::Scissors };
+        let papers = Game {
+            opponent: Values::Paper,
+            me: Values::Scissors,
+        };
         assert_eq!(papers.score(), 9);
-        let scissors = Game { opponent: Values::Scissors, me: Values::Rock };
+        let scissors = Game {
+            opponent: Values::Scissors,
+            me: Values::Rock,
+        };
         assert_eq!(scissors.score(), 7);
     }
 
     #[test]
     fn it_gives_the_total_score_during_loss() {
-        let rocks = Game { opponent: Values::Rock, me: Values::Scissors };
+        let rocks = Game {
+            opponent: Values::Rock,
+            me: Values::Scissors,
+        };
         assert_eq!(rocks.score(), 3);
-        let papers = Game { opponent: Values::Paper, me: Values::Rock };
+        let papers = Game {
+            opponent: Values::Paper,
+            me: Values::Rock,
+        };
         assert_eq!(papers.score(), 1);
-        let scissors = Game { opponent: Values::Scissors, me: Values::Paper };
+        let scissors = Game {
+            opponent: Values::Scissors,
+            me: Values::Paper,
+        };
         assert_eq!(scissors.score(), 2);
     }
-
-
 }

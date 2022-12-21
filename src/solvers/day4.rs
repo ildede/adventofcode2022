@@ -1,12 +1,13 @@
 use crate::Part;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
-    let result = lines.into_iter()
+    let result = lines
+        .into_iter()
         .map(split_to_pair)
         .map(|p| (expand_to_sections(p.0), expand_to_sections(p.1)))
         .map(|p| match part {
             Part::A => have_complete_overlap(p),
-            Part::B => have_partial_overlap(p)
+            Part::B => have_partial_overlap(p),
         })
         .filter(|&e| e == true)
         .count()
@@ -18,7 +19,7 @@ pub fn solve(part: Part, lines: Vec<String>) -> String {
 fn split_to_pair(line: String) -> (String, String) {
     match line.split_once(',') {
         None => panic!("invalid value"),
-        Some(el) => (el.0.to_string(), el.1.to_string())
+        Some(el) => (el.0.to_string(), el.1.to_string()),
     }
 }
 
@@ -37,19 +38,23 @@ fn expand_to_sections(assignment: String) -> Vec<u32> {
 }
 
 fn have_complete_overlap(pair_assignment: (Vec<u32>, Vec<u32>)) -> bool {
-    (pair_assignment.0.first().unwrap() <= pair_assignment.1.first().unwrap() && pair_assignment.0.last().unwrap() >= pair_assignment.1.last().unwrap())
-        ||
-        (pair_assignment.0.first().unwrap() >= pair_assignment.1.first().unwrap() && pair_assignment.0.last().unwrap() <= pair_assignment.1.last().unwrap())
+    (pair_assignment.0.first().unwrap() <= pair_assignment.1.first().unwrap()
+        && pair_assignment.0.last().unwrap() >= pair_assignment.1.last().unwrap())
+        || (pair_assignment.0.first().unwrap() >= pair_assignment.1.first().unwrap()
+            && pair_assignment.0.last().unwrap() <= pair_assignment.1.last().unwrap())
 }
 
 fn have_partial_overlap(pair_assignment: (Vec<u32>, Vec<u32>)) -> bool {
-    pair_assignment.0.first().unwrap() <= pair_assignment.1.last().unwrap() && pair_assignment.0.last().unwrap() >= pair_assignment.1.first().unwrap()
+    pair_assignment.0.first().unwrap() <= pair_assignment.1.last().unwrap()
+        && pair_assignment.0.last().unwrap() >= pair_assignment.1.first().unwrap()
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::solvers::day4::{
+        expand_to_sections, have_complete_overlap, have_partial_overlap, solve, split_to_pair,
+    };
     use crate::Part;
-    use crate::solvers::day4::{solve, split_to_pair, expand_to_sections, have_complete_overlap, have_partial_overlap};
 
     #[test]
     fn solve_example_part_a() {

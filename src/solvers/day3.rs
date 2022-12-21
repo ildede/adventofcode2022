@@ -1,9 +1,10 @@
-use std::collections::HashSet;
 use crate::Part;
+use std::collections::HashSet;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
     let scores: Vec<u32> = match part {
-        Part::A => lines.into_iter()
+        Part::A => lines
+            .into_iter()
             .map(split_in_compartments)
             .map(found_common_element)
             .map(convert_to_priority)
@@ -11,7 +12,7 @@ pub fn solve(part: Part, lines: Vec<String>) -> String {
         Part::B => found_badges(lines)
             .into_iter()
             .map(convert_to_priority)
-            .collect()
+            .collect(),
     };
 
     let result: u32 = scores.iter().sum();
@@ -23,18 +24,21 @@ fn found_badges(rucksacks: Vec<String>) -> Vec<char> {
     let mut current_badge: Vec<char> = Vec::new();
     for rucksack in rucksacks {
         if current_badge.is_empty() {
-            rucksack.chars()
-                .for_each(|e| if !current_badge.contains(&e) {
+            rucksack.chars().for_each(|e| {
+                if !current_badge.contains(&e) {
                     current_badge.push(e);
-                });
+                }
+            });
         } else {
             let prev_elements = current_badge.clone();
             current_badge = Vec::new();
             rucksack
                 .chars()
                 .filter(|e| prev_elements.contains(e))
-                .for_each(|e| if !current_badge.contains(&e) {
-                    current_badge.push(e);
+                .for_each(|e| {
+                    if !current_badge.contains(&e) {
+                        current_badge.push(e);
+                    }
                 })
         }
         if current_badge.len() == 1 {
@@ -53,7 +57,9 @@ fn split_in_compartments(rucksacks_content: String) -> (String, String) {
 
 fn found_common_element(compartment_elements: (String, String)) -> char {
     let set: HashSet<char> = compartment_elements.0.chars().collect();
-    let commons: Vec<char> = compartment_elements.1.chars()
+    let commons: Vec<char> = compartment_elements
+        .1
+        .chars()
         .filter(|c| set.contains(c))
         .collect();
     commons.first().unwrap().clone()
@@ -70,8 +76,8 @@ fn convert_to_priority(element: char) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::Part;
     use crate::solvers::day3::{found_badges, found_common_element, solve, split_in_compartments};
+    use crate::Part;
 
     #[test]
     fn solve_example_part_a() {
