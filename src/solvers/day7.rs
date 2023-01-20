@@ -1,6 +1,5 @@
 use crate::Part;
 use std::collections::{HashMap};
-use std::hash::Hash;
 use std::path::PathBuf;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
@@ -11,7 +10,19 @@ pub fn solve(part: Part, lines: Vec<String>) -> String {
                 .filter(|size| *size <= 100_000)
                 .sum::<u32>()
         },
-        Part::B => unimplemented!(),
+        Part::B => {
+            let dirs = get_dirs(lines);
+            let disk = 70_000_000;
+            let needed = 30_000_000;
+            let root = dirs.get(&PathBuf::from("/")).unwrap();
+            let available = disk - root;
+
+            dirs
+                .into_values()
+                .filter(|size| available + size >= needed)
+                .min()
+                .unwrap()
+        },
     };
     format!("{}", result)
 }
