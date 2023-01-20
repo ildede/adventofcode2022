@@ -1,5 +1,5 @@
 use crate::Part;
-use std::collections::{HashMap};
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 pub fn solve(part: Part, lines: Vec<String>) -> String {
@@ -9,7 +9,7 @@ pub fn solve(part: Part, lines: Vec<String>) -> String {
             dirs.into_values()
                 .filter(|size| *size <= 100_000)
                 .sum::<u32>()
-        },
+        }
         Part::B => {
             let dirs = get_dirs(lines);
             let disk = 70_000_000;
@@ -17,12 +17,11 @@ pub fn solve(part: Part, lines: Vec<String>) -> String {
             let root = dirs.get(&PathBuf::from("/")).unwrap();
             let available = disk - root;
 
-            dirs
-                .into_values()
+            dirs.into_values()
                 .filter(|size| available + size >= needed)
                 .min()
                 .unwrap()
-        },
+        }
     };
     format!("{}", result)
 }
@@ -59,12 +58,12 @@ fn get_dirs(lines: Vec<String>) -> HashMap<PathBuf, u32> {
 
 #[cfg(test)]
 mod tests {
+    use crate::solvers::day7::{get_dirs, solve};
+    use crate::Part;
     use std::collections::HashMap;
     use std::iter::Map;
     use std::path::PathBuf;
     use std::vec::Drain;
-    use crate::solvers::day7::{get_dirs, solve};
-    use crate::Part;
 
     #[test]
     fn solve_examples_part_a() {
